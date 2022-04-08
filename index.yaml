@@ -9,6 +9,6 @@ entries:
     name: app1
     type: application
     urls:
-    - https://github.com/djnixy/helm-chart/app1-0.1.0.tgz
+    - https://djnixy.github.io/helm-chart/
     version: 0.1.0
 generated: "2022-04-08T12:48:39.5843742+07:00"
