@@ -16,5 +16,5 @@ spec:
 
   selector:
     matchLabels:
-      {{- include "chart.selectorLabels" . | nindent 6 }}
+      {{- include "app1.labels" . | nindent 6 }}
 {{- end }}

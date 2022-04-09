@@ -63,7 +63,7 @@ Create the name of the service account to use
 
 
 {{- define "helpers.list-configmap-variables"}}
-{{- $fullName := include "powerbiz.fullname" . -}}
+{{- $fullName := include "app1.fullname" . -}}
 {{- range $key, $val := .Values.env.configmap }}
 - name: {{ $key | upper }}
   valueFrom:
@@ -74,7 +74,7 @@ Create the name of the service account to use
 {{- end }}
 
 {{- define "helpers.list-secret-variables"}}
-{{- $fullName := include "powerbiz.fullname" . -}}
+{{- $fullName := include "app1.fullname" . -}}
 {{- range $key, $val := .Values.env.secret }}
 - name: {{ $key | upper }}
   valueFrom:

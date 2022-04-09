@@ -1,0 +1,13 @@
+{{- if .Values.env.configmap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "app1.fullname" . }}-configmap
+  labels:
+    {{- include "app1.labels" . | nindent 4 }}
+data:
+  {{- range $key, $val := .Values.env.configmap }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end}}
+
+{{- end }}

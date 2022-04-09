@@ -33,18 +33,62 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "helpers.list-configmap-variables" . | indent 12 }}
+
+            {{- include "helpers.list-secret-variables" . | indent 12 }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 3000
               protocol: TCP
-          livenessProbe:
+
+          {{- if .Values.startupProbe.enabled }}
+          startupProbe:
             httpGet:
-              path: /
-              port: http
+              path: {{- toYaml .Values.startupProbe.httpGet.path | indent 1 }} 
+              port: {{- toYaml .Values.service.targetPort | indent 1 }}
+              
+          #     httpHeaders:
+          #       {{- include "helpers.list-startupProbe-httpGet-headers" . | indent 14 }}
+              
+            initialDelaySeconds: {{- toYaml .Values.startupProbe.initialDelaySeconds | indent 1 }}
+            timeoutSeconds: {{- toYaml .Values.startupProbe.timeoutSeconds | indent 1 }}
+            periodSeconds: {{- toYaml .Values.startupProbe.periodSeconds | indent 1 }}
+            failureThreshold: {{- toYaml .Values.startupProbe.failureThreshold | indent 1 }}
+            successThreshold: {{- toYaml .Values.startupProbe.successThreshold | indent 1 }}
+          {{- end }}
+
+          {{- if .Values.readinessProbe.enabled }}
           readinessProbe:
             httpGet:
-              path: /
-              port: http
+              path: {{- toYaml .Values.readinessProbe.httpGet.path | indent 1 }} 
+              port: {{- toYaml .Values.service.targetPort | indent 1 }}
+             
+              # httpHeaders:
+              #   {{- include "helpers.list-readinessProbe-httpGet-headers" . | indent 14 }}
+              
+            initialDelaySeconds: {{- toYaml .Values.readinessProbe.initialDelaySeconds | indent 1 }}
+            timeoutSeconds: {{- toYaml .Values.readinessProbe.timeoutSeconds | indent 1 }}
+            periodSeconds: {{- toYaml .Values.readinessProbe.periodSeconds | indent 1 }}
+            failureThreshold: {{- toYaml .Values.readinessProbe.failureThreshold | indent 1 }}
+            successThreshold: {{- toYaml .Values.readinessProbe.successThreshold | indent 1 }}
+          {{- end }}
+
+          {{- if .Values.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{- toYaml .Values.livenessProbe.httpGet.path | indent 1 }} 
+              port: {{- toYaml .Values.service.targetPort | indent 1 }}
+
+              # httpHeaders:
+              #   {{- include "helpers.list-livenessProbe-httpGet-headers" . | indent 14 }}
+
+            initialDelaySeconds: {{- toYaml .Values.livenessProbe.initialDelaySeconds | indent 1 }}
+            timeoutSeconds: {{- toYaml .Values.livenessProbe.timeoutSeconds | indent 1 }}
+            periodSeconds: {{- toYaml .Values.livenessProbe.periodSeconds | indent 1 }}
+            failureThreshold: {{- toYaml .Values.livenessProbe.failureThreshold | indent 1 }}
+            successThreshold: {{- toYaml .Values.livenessProbe.successThreshold | indent 1 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
@@ -59,3 +103,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+  {{- with .Values.strategy }}    
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
